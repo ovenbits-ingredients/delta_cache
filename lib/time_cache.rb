@@ -1,12 +1,11 @@
 class TimeCache
 
-  # to get around mattr_accessor bug
-  require 'rubygems'
-  require 'active_support'
+  db_path = File.dirname(__FILE__) + "/db"
+  require "#{db_path}/redis"
+  require "#{db_path}/cassandra"
 
-  require 'lib/db/redis'
-  require 'lib/db/cassandra'
-
+  class << self; attr_accessor :db, :logger end
+  
   attr_accessor :id, :options
 
   def initialize(id, options={})
@@ -109,9 +108,13 @@ class TimeCache
     Time.at(last_modified.max.to_i).utc.httpdate
   end
 
-  # can be set to CassandraDB or RedisDB
   def db
-    @db ||= CassandraDB
+    @db ||= TimeCache.db
+  end
+
+  # A logger, for logging.
+  def logger
+    @logger ||= TimeCache.logger
   end
 
 end
