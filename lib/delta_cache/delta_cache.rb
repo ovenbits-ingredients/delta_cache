@@ -1,7 +1,7 @@
 class DeltaCache
 
-  require '../lib/delta_cache/db/redis'
-  require '../lib/delta_cache/db/cassandra'
+  require File.expand_path('../db/redis', __FILE__)
+  require File.expand_path('../db/cassandra', __FILE__)
 
   class << self; attr_accessor :db, :logger end
 
