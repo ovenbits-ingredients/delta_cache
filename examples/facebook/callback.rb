@@ -27,15 +27,15 @@ class Callback
 
             # update cache
             friends_info = Facebook.get_friends(fb_id)
-            TimeCache.new(fb_id, :cache_key => "facebook_#{fb_id}").update(friends_info)
+            DeltaCache.new(fb_id, :cache_key => "facebook_#{fb_id}").update(friends_info)
 
             # show changes
-            puts TimeCache.new(
+            puts DeltaCache.new(
               fb_id, :last_modified => self.last_modified
             ).get_info
 
             # store last modified timestamp
-            self.last_modified = TimeCache.new(fb_id).get_last_modified
+            self.last_modified = DeltaCache.new(fb_id).get_last_modified
           end
         end
 

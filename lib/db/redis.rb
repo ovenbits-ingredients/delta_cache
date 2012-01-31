@@ -1,9 +1,9 @@
-class TimeCache::RedisDB
+class DeltaCache::RedisDB
 
   class << self; attr_accessor :connection end
 
   def connection
-    @connection ||= TimeCache::RedisDB.connection
+    @connection ||= DeltaCache::RedisDB.connection
   end
 
   def info_key(id)

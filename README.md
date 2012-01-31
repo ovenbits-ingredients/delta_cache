@@ -6,13 +6,13 @@ Store data in a cache that keeps track of deltas and tombstones. Retrieve change
 
 Setup Cassandra Keyspaces and Column Families
 
-    create keyspace TimeCache;
-    use TimeCache;
+    create keyspace DeltaCache;
+    use DeltaCache;
     create column family Cache;
     create column family Deltas;
 
-    create keyspace TimeCacheTest;
-    use TimeCacheTest;
+    create keyspace DeltaCacheTest;
+    use DeltaCacheTest;
     create column family Cache;
     create column family Deltas;
 

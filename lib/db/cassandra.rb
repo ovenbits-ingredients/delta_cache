@@ -5,14 +5,14 @@
 #
 # This module requires initialization, like so:
 #
-#   TimeCache::CassandraDB.connection = Cassandra.new('TimeCache')
-#   TimeCache::CassandraDB.logger = Logger.new(STDOUT, Logger::DEBUG)
+#   DeltaCache::CassandraDB.connection = Cassandra.new('DeltaCache')
+#   DeltaCache::CassandraDB.logger = Logger.new(STDOUT, Logger::DEBUG)
 #
 # You only need to set the logger if you need to debug.
 #
 # ## Storage
 #
-# This adapter uses two column families: `:Cache` and `:Deltas`. 
+# This adapter uses two column families: `:Cache` and `:Deltas`.
 #
 # The `:Cache` CF stores each cached object as a JSON blob. Each row is keyed
 # by the SHA1 hash of the blob. The blob itself is stored in a column named
@@ -27,17 +27,17 @@
 # cached objects back to a timestamp and is used to find delta entries to
 # remove if a cached object is marked as removed.
 
-class TimeCache::CassandraDB
-  
+class DeltaCache::CassandraDB
+
   MAX_DELTAS = 10_000
-  
+
   class << self; attr_accessor :connection end
-  
+
   # The Cassandra driver object to use.
   def connection
-    @connection ||= TimeCache::CassandraDB.connection
+    @connection ||= DeltaCache::CassandraDB.connection
   end
-  
+
   # Store a cached object.
   def set(data)
     data = data.to_json
@@ -121,8 +121,8 @@ class TimeCache::CassandraDB
 
   # Private: Log a message, if a logger is set.
   def log(msg)
-    return if TimeCache.logger.nil?
-    TimeCache.logger.debug(msg)
+    return if DeltaCache.logger.nil?
+    DeltaCache.logger.debug(msg)
   end
 
 end
