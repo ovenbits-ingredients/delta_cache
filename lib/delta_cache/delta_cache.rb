@@ -1,7 +1,7 @@
 class DeltaCache
 
-  require '../lib/delta_cache/db/redis'
-  require '../lib/delta_cache/db/cassandra'
+  require '../lib/db/redis'
+  require '../lib/db/cassandra'
 
   class << self; attr_accessor :db, :logger end
 
