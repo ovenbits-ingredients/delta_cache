@@ -1,23 +1,23 @@
 class TimeCache::RedisDB
-  
+
   class << self; attr_accessor :connection end
-  
+
   def connection
     @connection ||= TimeCache::RedisDB.connection
   end
-  
+
   def info_key(id)
-    "bl:info_cache:info:#{id}"
+    "delta_cache:info_cache:info:#{id}"
   end
 
   def deleted_info_key(id)
-    "bl:info_cache:deleted_info:#{id}"
+    "delta_cache:info_cache:deleted_info:#{id}"
   end
 
   # set parent key that holds the data
-  def set(data)
+  def set(data, key=nil)
     data = data.to_json
-    cache_key = Digest::SHA1.hexdigest(data)
+    cache_key = (key || Digest::SHA1.hexdigest(data))
     connection.set(cache_key, data)
     cache_key
   end

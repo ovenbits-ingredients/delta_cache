@@ -1,11 +1,10 @@
 class TimeCache
 
-  db_path = File.dirname(__FILE__) + "/db"
-  require "#{db_path}/redis"
-  require "#{db_path}/cassandra"
+  require '../lib/db/redis'
+  require '../lib/db/cassandra'
 
   class << self; attr_accessor :db, :logger end
-  
+
   attr_accessor :id, :options
 
   def initialize(id, options={})
@@ -59,13 +58,13 @@ class TimeCache
       db.add(deleted_info_key, timestamp, info_id)
     end
   end
-  
-  def timestamp(time=Time.now)
-    time.to_time.utc
+
+  def timestamp(time=nil)
+    Time.parse((time || Time.now).to_s).utc
   end
-  
+
   def set_info(info)
-    db.set(info)
+    db.set(info, options[:cache_key])
   end
 
   def get_info(show_deleted_flag=true)
@@ -94,7 +93,13 @@ class TimeCache
       end
     end
 
-    info.map(&:symbolize_keys)
+    info.map do |hash|
+      new_hash = Hash.new
+      hash.each do |k, v|
+        new_hash[k.to_sym] = v
+      end
+      new_hash
+    end
   end
 
   def get_last_modified
