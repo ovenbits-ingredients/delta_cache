@@ -36,4 +36,4 @@ Connection
 
     DeltaCache.logger = Logger.new(STDOUT, Logger::DEBUG)
 
-See emamples directory for more details.
+See examples directory for more details.
