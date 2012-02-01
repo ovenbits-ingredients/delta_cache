@@ -1,8 +1,16 @@
-# Keep track of deltas and tombstones
+# Keep track of deltas and tombstones for an array of data
 
-Store data in a cache that keeps track of deltas and tombstones. Retrieve changes from a given timestamp.
+A cache that keeps track of deltas and tombstones for an array of data. Deltas and tombstones can be retrieved from the cache using a last-modified timestamp.
 
 ## Configuration
+
+### Redis
+
+Connection
+
+    DeltaCache.connection = Redis.new(:host => "your-host-ip")
+
+### Cassandra
 
 Setup Cassandra Keyspaces and Column Families
 
@@ -16,18 +24,16 @@ Setup Cassandra Keyspaces and Column Families
     create column family Cache;
     create column family Deltas;
 
-## Usage
+Connection
 
-### Connections
+    DeltaCache.connection = Cassandra.new('DeltaCache')
 
-Redis
+### Namespace
 
-    DeltaCache::RedisDB.connection = Redis.new(:host => "127.0.0.1")
-    DeltaCache.db = DeltaCache::RedisDB.new
+    DeltaCache.cache_name = "your-cache-namespace"
 
-Cassandra
+### Logger
 
-    DeltaCache::CassandraDB.connection = Cassandra.new('DeltaCache')
-    DeltaCache::CassandraDB.logger = Logger.new(STDOUT, Logger::DEBUG)
-    DeltaCache.db = DeltaCache::CassandraDB.new
+    DeltaCache.logger = Logger.new(STDOUT, Logger::DEBUG)
 
+See emamples directory for more details.

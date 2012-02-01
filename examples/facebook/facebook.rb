@@ -13,34 +13,17 @@ require 'net/http'
 require 'uri'
 
 require 'rubygems'
-require 'hyper_graph'
+require 'fb_graph'
 require 'redis'
 
-require '../lib/delta_cache'
+require '../../lib/delta_cache'
 
 FACEBOOK_CONFIG = {
-  :app_id => 115997361652,
-  :access_token => "115997361652|u4x6su1ZTv8NkgmwK0WgBJ4Yvwg",
-  :subscription_callback_url => "http://24.153.226.51:9000/",
-  :subscription_token => "74bfdac24ffb6f9305ef78cf0ca3671b0d9b615a"
+  :app_id => "your-app-id",
+  :access_token => "your-fb-access-token",
+  :subscription_callback_url => "http://your-public-ip/",
+  :subscription_token => "any-token-to-validate-the-fb-request"
 }
-
-## Redis
-DeltaCache::RedisDB.connection = Redis.new(
-  :host => "127.0.0.1"
-)
-DeltaCache.db = DeltaCache::RedisDB.new
-
-## Cassandra
-# DeltaCache::CassandraDB.connection = Cassandra.new(
-#   'DeltaCache',
-#   '127.0.0.1:9160',
-#   :retries => 3
-# )
-# DeltaCache.db = DeltaCache::CassandraDB.new
-
-## Logging
-# DeltaCache.logger = Logger.new(STDOUT, Logger::DEBUG)
 
 class Facebook
 
@@ -68,9 +51,7 @@ class Facebook
   end
 
   def self.get_friends(fb_id)
-    friends = HyperGraph.get("#{fb_id}/friends", :access_token => FACEBOOK_CONFIG[:access_token])
-
-    return friends
+    FbGraph::User.fetch(fb_id, :access_token => FACEBOOK_CONFIG[:access_token])
   end
 
   class HTTP

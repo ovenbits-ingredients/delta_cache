@@ -5,8 +5,8 @@
 #
 # This module requires initialization, like so:
 #
-#   DeltaCache::CassandraDB.connection = Cassandra.new('DeltaCache')
-#   DeltaCache::CassandraDB.logger = Logger.new(STDOUT, Logger::DEBUG)
+#   DeltaCache.connection = Cassandra.new('DeltaCache')
+#   DeltaCache.logger = Logger.new(STDOUT, Logger::DEBUG)
 #
 # You only need to set the logger if you need to debug.
 #
@@ -31,11 +31,32 @@ class DeltaCache::CassandraDB
 
   MAX_DELTAS = 10_000
 
-  class << self; attr_accessor :connection end
+  attr_accessor :cache_id
 
-  # The Cassandra driver object to use.
+  def initialize(cache_id)
+    self.cache_id = cache_id
+  end
+
   def connection
-    @connection ||= DeltaCache::CassandraDB.connection
+    DeltaCache.connection
+  end
+
+  def logger
+    DeltaCache.logger
+  end
+
+  def cache_name
+    DeltaCache.cache_name
+  end
+
+  # Given a key ID, generate a key into `:Deltas` for cached objects.
+  def info_key
+    ["cache", cache_name, cache_id].join(":")
+  end
+
+  # Given a key ID, generate a key into `:Deltas` for deleted cache objects.
+  def deleted_info_key
+    ["deleted", cache_name, cache_id].join(":")
   end
 
   # Store a cached object.
@@ -99,16 +120,6 @@ class DeltaCache::CassandraDB
     connection.exists?(:Deltas, key)
   end
 
-  # Given a user ID, generate a key into `:Deltas` for cached objects.
-  def info_key(id)
-    ["cache", id].join(":")
-  end
-
-  # Given a user ID, generate a key into `:Deltas` for deleted cache objects.
-  def deleted_info_key(id)
-    ["deleted", id].join(":")
-  end
-
   # Given a timestamp, generate a column name for use in range queries on `:Deltas`.
   def timestamp_name(timestamp)
     ["ts", timestamp.to_f].join(":")
@@ -121,8 +132,8 @@ class DeltaCache::CassandraDB
 
   # Private: Log a message, if a logger is set.
   def log(msg)
-    return if DeltaCache.logger.nil?
-    DeltaCache.logger.debug(msg)
+    return if logger.nil?
+    logger.debug(msg)
   end
 
 end

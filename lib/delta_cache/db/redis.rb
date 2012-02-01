@@ -1,23 +1,41 @@
 class DeltaCache::RedisDB
 
-  class << self; attr_accessor :connection end
+  attr_accessor :cache_id
+
+  def initialize(cache_id)
+    self.cache_id = cache_id
+  end
 
   def connection
-    @connection ||= DeltaCache::RedisDB.connection
+    DeltaCache.connection
   end
 
-  def info_key(id)
-    "delta_cache:info_cache:info:#{id}"
+  def cache_name
+    DeltaCache.cache_name
   end
 
-  def deleted_info_key(id)
-    "delta_cache:info_cache:deleted_info:#{id}"
+  def info_key
+    [
+      "delta_cache",
+      "info",
+      cache_name,
+      cache_id
+      ].join(":")
+  end
+
+  def deleted_info_key
+    [
+      "delta_cache",
+      "deleted_info",
+      cache_name,
+      cache_id
+      ].join(":")
   end
 
   # set parent key that holds the data
-  def set(data, key=nil)
+  def set(data)
     data = data.to_json
-    cache_key = (key || Digest::SHA1.hexdigest(data))
+    cache_key = Digest::SHA1.hexdigest(data)
     connection.set(cache_key, data)
     cache_key
   end
